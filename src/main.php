@@ -1,6 +1,6 @@
 <?php
 
-include './classes/game.php';
+require_once './classes/game.php';
 require_once '../vendor/autoload.php';
 
 use Classes\Game;
