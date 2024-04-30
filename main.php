@@ -1,36 +1,34 @@
 <?php
 
+include 'game.php';
+
 $moves = $argv;
 array_shift($moves);
 
-if(count($moves) < 3) {
-    echo "The number of moves must be >= 3.";
-    exit;
-}
+$game = new Game($moves);
 
-if(count($moves) % 2 == 0) {
-    echo "The number of moves must be odd.";
-    exit;
-}
-
-$menuMoves = "";
-for($i = 0; $i < count($moves); $i++) {
-    $menuMoves .= sprintf("%d - %s\n", $i + 1, $moves[$i]);
-}
-$menuMoves .= sprintf("%d - %s\n", 0, "exit");
-
+$menuMoves = $game->generateMenu();
 
 while(true) {
-    $hmacKey = bin2hex(random_bytes(32));
-    $computerMove = rand(1, 3);
-    $hmac = hash_hmac('sha256', $computerMove, $computerMove);
-    echo sprintf("HMAC: %s \n", $hmac);
+    echo "\n\n";
+    $move = $game->makeMove();
+    echo sprintf("HMAC: %s \n", $move["hmac"]);
     echo $menuMoves;
     echo "Enter your move: ";
     $input = fgets(STDIN);
-    if(@$move = $moves[(int)$input - 1]) {
-        echo sprintf("Your move: %s\n", $move);
+
+    if ($input === "?\n") {
+        echo $game->generateWinTable();
+        continue;
     } else {
-        break;
+        $input = (int)$input - 1;
+        if(!($input >= 0 && $input < $game->getCount())) {
+            break;
+        }
     }
+
+    echo sprintf("Your move: %s\n", $game->getMove($input));
+    echo sprintf("Computer move: %s\n", $game->getMove($move["computerMove"]));
+    echo sprintf("HMAC key: %s\n", $move["hmacKey"]);
+    echo "\n".(Game::getText($game->checkMove($input, $move["computerMove"])))."\n";
 }
