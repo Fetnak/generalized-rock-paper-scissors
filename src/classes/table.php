@@ -9,12 +9,10 @@ class Table
     public static function generateTable(Moves $moves): string
     {
         $tbl = new Console_Table();
-        $header = array_merge(['v PC\User >'], $moves->getMoves());
-        $tbl->addRow($header);
+        $tbl->addRow(array_merge(['v PC\User >'], $moves->getMoves()));
         $tbl->addSeparator();
         for($i = 0; $i < $moves->getCount(); $i++) {
-            $row = [];
-            $row[] = $moves->getMove($i);
+            $row = [$moves->getMove($i)];
             for($j = 0; $j < $moves->getCount(); $j++) {
                 $row[] = self::getText(Game::checkMove($i, $j, $moves));
             }
